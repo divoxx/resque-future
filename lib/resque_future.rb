@@ -16,7 +16,7 @@ module Resque
   
   # Same as enqueue_future excepts it allows manually setting the UUID for the future object.
   def enqueue_future_with_uuid(uuid, klass, *args)
-    FutureJob.create(queue_from_class(klass), uuid, klass, *args)
+    ResqueFuture::FutureJob.create(queue_from_class(klass), uuid, klass, *args)
   end
   
   # Get a future job
