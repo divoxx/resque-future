@@ -4,12 +4,23 @@ require 'rake'
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
-    gem.name = "resque-future"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
-    gem.email = "divoxx@gmail.com"
-    gem.homepage = "http://github.com/divoxx/resque-future"
-    gem.authors = ["Rodrigo Kochenburger"]
+    gem.name        = "resque-future"
+    gem.summary     = "Resque plugin that allows querying future jobs for it's result"
+    gem.description = <<-DESC
+Resque plugin that allows querying future jobs for it's result, for example:
+
+  job = Resque.enqueue_future(MixerWorker, "yeah")
+  # store job.uuid somewhere
+  
+  # Later on
+  job = Resque.get_future_job(uuid)
+  job.ready?
+  job.result
+  job.finished_at
+    DESC
+    gem.email       = "divoxx@gmail.com"
+    gem.homepage    = "http://github.com/divoxx/resque-future"
+    gem.authors     = ["Rodrigo Kochenburger"]
     gem.add_dependency "resque", ">= 1.10.0"
     gem.add_development_dependency "rspec", ">= 1.2.9"
     gem.add_development_dependency "yard", ">= 0"
