@@ -1,0 +1,1 @@
+load "resque_future.rb"
