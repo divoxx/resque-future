@@ -38,6 +38,11 @@ module ResqueFuture
       redis.exists(self.result_payload_key)
     end
     
+    # Returns true/false whether it is waiting in the queue or being processed
+    def processing?
+      redis.exists(self.payload_key) && !ready?
+    end
+    
     # Returns the result for the job
     def result
       self.result_payload["result"] if self.result_payload
@@ -61,7 +66,7 @@ module ResqueFuture
     
     # Return the redis payload key for the given UUID
     def self.payload_key(uuid)
-      "meta:#{@uuid}:payload"
+      "meta:#{uuid}:payload"
     end
     
     # Return the payload for the given UUID

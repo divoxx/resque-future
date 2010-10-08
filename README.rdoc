@@ -12,6 +12,12 @@ Description goes here.
   (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
 * Send me a pull request. Bonus points for topic branches.
 
+== TODO
+
+* Raise an error when trying to enqueue a item with existing UUID
+* Auto retry generating another UUID if an error is raised when auto generated it
+* Store enqueued_at too
+
 == Copyright
 
 Copyright (c) 2010 Rodrigo Kochenburger. See LICENSE for details.

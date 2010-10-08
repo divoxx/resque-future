@@ -44,6 +44,10 @@ describe FutureJob do
       @job.should be_ready
     end
     
+    it "should not be processing" do
+      @job.should_not be_processing
+    end
+    
     it "should have a result" do
       @job.result.should_not be_nil
       @job.result.should be(true)
@@ -77,6 +81,10 @@ describe FutureJob do
   shared_examples_for "querying a unprocessed job" do
     it "should be ready" do
       @job.should_not be_ready
+    end
+    
+    it "should be processing" do
+      @job.should be_processing
     end
     
     it "should have a result" do
