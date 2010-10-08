@@ -25,7 +25,9 @@ module ResqueFuture
     
     # Query for a FutureJob using it's UUID
     def self.get(queue, uuid)
-      self.new(queue, uuid, self.payload(uuid))
+      if payload = self.payload(uuid)
+        self.new(queue, uuid, payload)
+      end
     end
     
     # Persist the job information into redis

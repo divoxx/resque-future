@@ -112,4 +112,10 @@ describe FutureJob do
 
     it_should_behave_like "querying a unprocessed job"
   end
+  
+  describe "querying an unexisting job" do
+    it "should return nil" do
+      FutureJob.get(@queue, "unexisting uuid").should be_nil
+    end
+  end
 end
