@@ -57,6 +57,16 @@ describe FutureJob do
       @job.finished_at.should_not be_nil
       @job.finished_at.should be_instance_of(Time)
     end
+    
+    it "should have enqueued_at set" do
+      @job.enqueued_at.should_not be_nil
+      @job.enqueued_at.should be_instance_of(Time)
+    end
+    
+    it "should have started_at set" do
+      @job.started_at.should_not be_nil
+      @job.started_at.should be_instance_of(Time)
+    end
   end
   
   describe "querying a processed job with same instance" do 
@@ -87,13 +97,22 @@ describe FutureJob do
       @job.should be_processing
     end
     
-    it "should have a result" do
+    it "should not have a result" do
       @job.result.should be_nil
     end
     
-    it "should have finished_at set" do
+    it "should not have finished_at set" do
       @job.finished_at.should be_nil
     end
+    
+    it "should not have started_at set" do
+      @job.started_at.should be_nil
+    end
+    
+    it "should have enqueued_at set" do
+      @job.enqueued_at.should_not be_nil
+      @job.enqueued_at.should_not be_instance_of(Time)
+    end    
   end
   
   describe "querying a unprocessed job with same instance" do 

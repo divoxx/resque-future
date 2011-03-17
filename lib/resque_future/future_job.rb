@@ -12,6 +12,7 @@ module ResqueFuture
       @uuid = uuid || self.generate_uuid
       payload["args"].unshift(@uuid)
       super(queue, payload)
+      set_result('enqueued_at' => Time.now.utc)
     end
   
     # Override Job.create method so that it returns a instance of FutureJob allowing
@@ -37,12 +38,19 @@ module ResqueFuture
     
     # Returns true/false if the job has been processed yet
     def ready?
-      redis.exists(self.result_payload_key)
+      self.result_payload(true).has_key?('finished_at')
     end
     
     # Returns true/false whether it is waiting in the queue or being processed
     def processing?
-      redis.exists(self.payload_key) && !ready?
+      self.result_payload(true).has_key?('started_at') && !self.result_payload(true).has_key?('finished_at')
+    end
+    
+    # Perform the job
+    def perform
+      set_result("started_at" => Time.now.utc)
+      super
+      set_result("finished_at" => Time.now.utc)
     end
     
     # Returns the result for the job
@@ -50,14 +58,23 @@ module ResqueFuture
       self.result_payload["result"] if self.result_payload
     end
     
+    def result=(result_value)
+      set_result("result" => result_value)
+    end
+    
     # Returns the time that the result was written to redis and the job finished processing.
     def finished_at
       Time.parse(self.result_payload["finished_at"]) if self.result_payload && self.result_payload["finished_at"]
     end
     
-    # Sets the result for this job
-    def result=(result_value)
-      redis.set(result_payload_key, encode('result' => result_value, "finished_at" => Time.now.utc))
+    # Returns the time that the job was enqueued
+    def enqueued_at
+      Time.parse(self.result_payload["enqueued_at"]) if self.result_payload && self.result_payload["enqueued_at"]
+    end
+    
+    # Returns the time that the job has started processing
+    def started_at
+      Time.parse(self.result_payload["started_at"]) if self.result_payload && self.result_payload["started_at"]
     end
     
   protected
@@ -102,8 +119,15 @@ module ResqueFuture
     end
     
     # Return and cache the result payload
-    def result_payload
+    def result_payload(force = false)
+      @result_payload = nil if force
       @result_payload ||= self.class.result_payload(@uuid)
+    end
+    
+    def set_result(hsh)
+      hsh = (self.result_payload || {}).merge(hsh)
+      redis.set(self.result_payload_key, encode(hsh))
+      self.result_payload(true)
     end
   end
 end
